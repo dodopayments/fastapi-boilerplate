@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col items-center justify-center p-4">
+    <header class="w-full max-w-6xl flex justify-between items-center py-6">
+        <div class="text-2xl font-bold">Dodo Payments</div>
+        <nav>
+            <button onclick="handlePortal()" class="text-gray-300 hover:text-white transition">
+                Customer Portal
+            </button>
+        </nav>
+    </header>
+
+    <main class="flex-1 w-full max-w-6xl flex flex-col items-center justify-center text-center">
+        <h1
+            class="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
+            Simple, Transparent Pricing
+        </h1>
+        <p class="text-xl text-gray-400 mb-12 max-w-2xl">
+            Start accepting payments in minutes with Dodo Payments. No hidden fees, no surprises.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-8 w-full">
+            {% for product in products %}
+            <div
+                class="border border-gray-800 rounded-2xl p-8 bg-gray-900/50 backdrop-blur hover:border-gray-700 transition {% if loop.index == 2 %}border-gray-700 bg-gray-900 relative transform scale-105 shadow-2xl{% endif %}">
+                {% if loop.index == 2 %}
+                <div
+                    class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-white text-black px-3 py-1 rounded-full text-sm font-bold">
+                    Popular
+                </div>
+                {% endif %}
+                <h3 class="text-xl font-semibold mb-2">{{ product.name }}</h3>
+                <div class="text-4xl font-bold mb-6">
+                    {% if product.price < 100000 %} ${{ "%.2f" |format(product.price / 100) }}<span
+                        class="text-lg text-gray-500 font-normal">/mo</span>
+                        {% else %}
+                        Custom
+                        {% endif %}
+                </div>
+                <ul class="text-left space-y-3 mb-8 text-gray-400">
+                    {% for feature in product.features %}
+                    <li class="flex items-center"><span class="mr-2 text-green-500">✓</span> {{ feature }}</li>
+                    {% endfor %}
+                </ul>
+                <button onclick="handleCheckout('{{ product.product_id }}')"
+                    class="w-full py-3 rounded-lg {% if loop.index == 2 %}bg-white text-black{% else %}border border-gray-700{% endif %} font-semibold hover:{% if loop.index == 2 %}bg-gray-200{% else %}bg-gray-800{% endif %} transition">
+                    Get Started
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer class="w-full max-w-6xl py-8 mt-12 border-t border-gray-800 text-center text-gray-500">
+        <p>&copy; 2024 Dodo Payments Boilerplate. All rights reserved.</p>
+    </footer>
+</div>
+
+<script>
+    async function handleCheckout(productId) {
+        try {
+            // In a real app, get customer data from your authentication system
+            const customerData = {
+                name: "d",
+                email: "venkat@gmail.com"
+            };
+
+            const response = await fetch('/api/checkout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    customer: customerData  // Pre-fill customer data
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                window.location.href = data.checkout_url;
+            } else {
+                alert('Error creating checkout session: ' + (data.detail || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+    async function handlePortal() {
+        // In a real app, you'd get the customer ID from the logged-in user session
+        const customerId = "cus_001";
+
+        try {
+            const response = await fetch('/api/customer-portal/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ customer_id: customerId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                window.location.href = data.url;
+            } else {
+                alert('Error accessing portal: ' + (data.detail || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+</script>
+{% endblock %}
