@@ -1,5 +1,9 @@
 # Dodo Payments FastAPI Boilerplate
 
+<a href="https://discord.gg/bYqAp4ayYh">
+    <img src="https://img.shields.io/discord/1305511580854779984?label=Join%20Discord&logo=discord" alt="Join Discord" />
+</a>
+
 A minimal FastAPI boilerplate for integrating [Dodo Payments](https://dodopayments.com/) into your Python application.
 
 ## Features
